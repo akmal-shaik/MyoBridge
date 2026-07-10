@@ -16,7 +16,7 @@ ESP32 analogue acquisition
         ↓
 Filtering and windowing
         ↓
-Gesture-classification model
+Gesture classification model
         ↓
 Rover or computer control
 
@@ -38,16 +38,16 @@ The first version of MyoBridge will classify a small set of forearm gestures fro
 * Digital signal processing
 * Feature extraction
 * Machine-learning classification
-* Real-time inference
-* Human–machine interfaces
+* Real time inference
+* Human machine interfaces
 
 ## Project goals
 
-* Build a reproducible EMG data-acquisition pipeline.
-* Collect and document a labelled multi-session dataset.
-* Compare conventional machine-learning models.
+* Build a reproducible EMG data acquisition pipeline.
+* Collect and document a labelled multi session dataset.
+* Compare conventional machine learning models.
 * Evaluate performance on recordings from an unseen session.
-* Create a real-time gesture-recognition demonstration.
+* Create a real time gesture recognition demonstration.
 * Document engineering decisions, failures and limitations.
 
 ## Repository structure
@@ -56,17 +56,13 @@ The first version of MyoBridge will classify a small set of forearm gestures fro
 docs/       Project specifications and engineering documentation
 firmware/   ESP32 acquisition and embedded-inference code
 hardware/   Wiring, components and future hardware designs
-notebooks/  Signal exploration and model-development notebooks
+notebooks/  Signal exploration and model development notebooks
 src/        Reusable Python modules
 tests/      Automated tests
 results/    Figures, metrics and benchmark results
 data/       Dataset documentation and small example files
 demo/       Dashboard and demonstration material
 ```
-
-## Safety
-
-MyoBridge is an educational engineering project and is not a medical device. Only appropriate commercial surface-EMG equipment and safe, isolated or battery-powered configurations will be used for body-connected measurements.
 
 ## Roadmap
 

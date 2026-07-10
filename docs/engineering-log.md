@@ -30,3 +30,33 @@
 ### Next action
 
 Build a simulated signal-processing notebook and understand the shape of an EMG classification pipeline before purchasing or connecting hardware.
+
+## Day 2 — Simulated EMG exploration
+
+### Work completed
+
+- Created a synthetic EMG-like signal.
+- Visualised simulated rest and contraction periods.
+- Rectified the signal.
+- Calculated a moving RMS envelope.
+- Computed and plotted the FFT magnitude spectrum.
+- Segmented the signal into overlapping windows.
+- Extracted basic time-domain features.
+
+### Technical decisions
+
+- Used a simulated sampling frequency of 1000 Hz.
+- Used 250 ms signal windows.
+- Used 50% overlap between windows.
+- Began with RMS, mean absolute value, variance and waveform length features.
+
+### What I learned
+
+- Raw EMG is difficult to interpret directly.
+- Rectification and RMS make muscle activation easier to detect.
+- Windowing is required before feature extraction and classification.
+- Frequency-domain analysis provides information that is not obvious in the raw waveform.
+
+### Next action
+
+Build the ESP32 analogue acquisition firmware and verify that real analogue values can be streamed to the laptop.
