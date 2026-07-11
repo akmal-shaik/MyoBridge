@@ -60,3 +60,34 @@ Build a simulated signal-processing notebook and understand the shape of an EMG 
 ### Next action
 
 Build the ESP32 analogue acquisition firmware and verify that real analogue values can be streamed to the laptop.
+
+## Day 3 — ESP32 analogue acquisition
+
+### Work completed
+
+- Installed ESP32 support in Arduino IDE.
+- Verified USB serial communication.
+- Read a potentiometer using the ESP32 ADC.
+- Streamed timestamped analogue values over serial.
+- Created a Python serial recorder.
+- Saved acquired samples to CSV.
+- Plotted the recorded analogue signal.
+- Estimated the achieved sampling rate.
+
+### Technical decisions
+
+- Used GPIO34 as the initial ADC input.
+- Used a target sampling interval of 1000 microseconds.
+- Used 115200 baud for serial transmission.
+- Used a potentiometer before connecting the body-attached sensor.
+
+### What I learned
+
+- The ESP32 ADC produces integer readings between approximately 0 and 4095.
+- The acquisition rate may differ slightly from the intended rate.
+- Serial Monitor must be closed before Python can access the COM port.
+- The acquisition pipeline can be tested independently of the EMG sensor.
+
+### Next action
+
+Inspect, solder and safely connect the MyoWare sensor when it arrives.
