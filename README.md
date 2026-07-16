@@ -1,79 +1,29 @@
 # MyoBridge
 
-MyoBridge is a real time neuromuscular interface that uses surface electromyography, digital signal processing and machine learning to recognise hand gestures and control external devices.
+MyoBridge is a real-time EMG gesture-recognition interface using surface electromyography, signal processing, embedded electronics, and machine learning.
 
-## Project status
+The goal is to classify forearm muscle activity and use the recognised gesture to control a digital or physical system.
 
-**Current phase:** Project definition and signal-acquisition planning.
+## Current status
 
-## Planned system
+- Simulated EMG signal-processing pipeline completed.
+- ESP32 analogue acquisition pipeline completed using a potentiometer test input.
+- MyoWare EMG sensor integration pending.
 
+## System overview
+
+```text
 Forearm muscle activity
         ↓
 Surface EMG sensor
         ↓
-ESP32 analogue acquisition
+ESP32 ADC acquisition
         ↓
-Filtering and windowing
+Python recording pipeline
         ↓
-Gesture classification model
+Signal processing and feature extraction
         ↓
-Rover or computer control
-
-## Version 1 objective
-
-The first version of MyoBridge will classify a small set of forearm gestures from surface EMG signals and use those predictions to control a digital or physical output in real time.
-
-## Initial gesture classes
-
-* Rest
-* Fist
-* Wrist flexion
-* Wrist extension
-
-## Planned technical areas
-
-* Surface EMG acquisition
-* Embedded electronics
-* Digital signal processing
-* Feature extraction
-* Machine-learning classification
-* Real time inference
-* Human machine interfaces
-
-## Project goals
-
-* Build a reproducible EMG data acquisition pipeline.
-* Collect and document a labelled multi session dataset.
-* Compare conventional machine learning models.
-* Evaluate performance on recordings from an unseen session.
-* Create a real time gesture recognition demonstration.
-* Document engineering decisions, failures and limitations.
-
-## Repository structure
-
-```text
-docs/       Project specifications and engineering documentation
-firmware/   ESP32 acquisition and embedded-inference code
-hardware/   Wiring, components and future hardware designs
-notebooks/  Signal exploration and model development notebooks
-src/        Reusable Python modules
-tests/      Automated tests
-results/    Figures, metrics and benchmark results
-data/       Dataset documentation and small example files
-demo/       Dashboard and demonstration material
-```
-
-## Roadmap
-
-* [ ] Define Version 1 requirements
-* [ ] Build analogue-data streaming pipeline
-* [ ] Acquire the first EMG recording
-* [ ] Create the preprocessing pipeline
-* [ ] Collect a labelled dataset
-* [ ] Train baseline classifiers
-* [ ] Implement real-time prediction
-* [ ] Control an external system
-* [ ] Evaluate cross-session performance
-* [ ] Publish the technical report and demonstration
+Gesture classifier
+        ↓
+External control output
 
