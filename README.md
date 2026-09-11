@@ -1,29 +1,59 @@
+
+
 # MyoBridge
 
-MyoBridge is a real-time EMG gesture-recognition interface using surface electromyography, signal processing, embedded electronics, and machine learning.
+MyoBridge is a real-time surface EMG interface built using a MyoWare 2.0 muscle sensor and an ESP32.
 
-The goal is to classify forearm muscle activity and use the recognised gesture to control a digital or physical system.
+The project captures electrical activity from forearm muscles, processes the EMG signal in software, detects muscle activation, and sends the results to a computer for live visualisation and control.
 
-## Current status
+## Project Goal
 
-Hardware integration update: During initial MyoWare 2.0 integration, the ENV and GND through-hole pads were damaged during soldering, preventing reliable sensor power/output. ESP32 ADC functionality was independently verified. A MyoWare Power Shield has been ordered to bypass the damaged power connections through the sensor's snap interface. The acquisition approach has also been updated to use the RAW EMG output, with rectification and envelope extraction performed digitally in software.
+Build a simple end-to-end EMG system:
 
-Next: Validate MyoWare operation using Power Shield → acquire real RAW EMG → implement digital rectification and envelope extraction.
+Forearm muscle activity  
+↓  
+MyoWare 2.0  
+↓  
+ESP32 ADC  
+↓  
+Digital signal processing  
+↓  
+Muscle activation detection  
+↓  
+Python visualisation / control
 
-## System overview
+## Hardware
 
-```text
-Forearm muscle activity
-        ↓
-Surface EMG sensor
-        ↓
-ESP32 ADC acquisition
-        ↓
-Python recording pipeline
-        ↓
-Signal processing and feature extraction
-        ↓
-Gesture classifier
-        ↓
-External control output
+- MyoWare 2.0 Muscle Sensor
+- MyoWare 2.0 Power Shield
+- ESP32 DevKitC
+- Surface electrodes
+- USB isolator
 
+## Current Status
+
+The MyoWare sensor is powered successfully using the Power Shield.
+
+The RAW output has been measured at approximately 1.9–2.0 V and successfully read by the ESP32 ADC.
+
+The next stage is to acquire a clean RAW EMG signal during muscle contractions before implementing digital rectification and envelope extraction.
+
+## Repository
+
+- `firmware/` — ESP32 firmware
+- `python/` — Python recording and visualisation
+- `data/` — example EMG recordings
+
+## Planned Pipeline
+
+1. Acquire RAW EMG
+2. Sample EMG using ESP32
+3. Remove DC offset and rectify signal
+4. Extract software envelope
+5. Detect muscle activation
+6. Visualise EMG in real time
+7. Use muscle activation as a control input
+
+## Status
+
+Work in progress.
