@@ -1,27 +1,21 @@
-const int analogPin = 34;
-
+const int emgPin = 34;
 const unsigned long samplingIntervalUs = 1000;
-unsigned long previousSampleTime = 0;
+
+unsigned long lastSampleUs = 0;
 
 void setup() {
-  Serial.begin(115200);
-  analogReadResolution(12);
-
-  delay(1000);
-
-  Serial.println("timestamp_us,adc_value");
+	Serial.begin(115200);
+	analogReadResolution(12);
 }
 
 void loop() {
-  unsigned long currentTime = micros();
+	unsigned long currentUs = micros();
 
-  if (currentTime - previousSampleTime >= samplingIntervalUs) {
-    previousSampleTime = currentTime;
+	if (currentUs - lastSampleUs >= samplingIntervalUs) {
+		lastSampleUs += samplingIntervalUs;
 
-    int adcValue = analogRead(analogPin);
+		int adcValue = analogRead(emgPin);
 
-    Serial.print(currentTime);
-    Serial.print(",");
-    Serial.println(adcValue);
-  }
+		Serial.println(adcValue);
+	}
 }

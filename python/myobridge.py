@@ -1,68 +1,45 @@
-from __future__ import annotations
-
+import serial
 import csv
 import time
 from pathlib import Path
 
-import serial
+PORT = "COM6"
+BAUD = 115200
+SAMPLE_RATE = 1000
+DURATION = 20
 
+output_file = Path(__file__).resolve().parents[1] / "data" / "emg_validation.csv"
 
-SERIAL_PORT = "COM6"
-BAUD_RATE = 115200
-RECORDING_DURATION_SECONDS = 10
+ser = serial.Serial(PORT, BAUD, timeout=1)
+time.sleep(2)
+ser.reset_input_buffer()
 
-OUTPUT_PATH = Path("data/sample/esp32_analog_test.csv")
+print(f"Recording EMG for {DURATION} seconds...")
 
+start_time = time.time()
+sample_count = 0
 
-def main() -> None:
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+with open(output_file, "w", newline="") as file:
+	writer = csv.writer(file)
+	writer.writerow(["sample", "time_s", "adc"])
 
-    try:
-        connection = serial.Serial(
-            port=SERIAL_PORT,
-            baudrate=BAUD_RATE,
-            timeout=1,
-        )
-    except serial.SerialException as error:
-        raise SystemExit(f"Could not open {SERIAL_PORT}: {error}") from error
+	while time.time() - start_time < DURATION:
+		line = ser.readline().decode("utf-8", errors="ignore").strip()
 
-    time.sleep(2)
+		if not line:
+			continue
 
-    start_time = time.time()
-    rows_written = 0
+		try:
+			adc = int(line)
+		except ValueError:
+			continue
 
-    try:
-        with OUTPUT_PATH.open("w", newline="", encoding="utf-8") as file:
-            writer = csv.writer(file)
-            writer.writerow(["timestamp_us", "adc_value"])
+		time_s = sample_count / SAMPLE_RATE
 
-            while time.time() - start_time < RECORDING_DURATION_SECONDS:
-                line = connection.readline().decode("utf-8", errors="ignore").strip()
+		writer.writerow([sample_count, time_s, adc])
+		sample_count += 1
 
-                if not line or line.startswith("timestamp"):
-                    continue
+ser.close()
 
-                parts = line.split(",")
-
-                if len(parts) != 2:
-                    continue
-
-                timestamp_text, adc_text = parts
-
-                try:
-                    timestamp_us = int(timestamp_text)
-                    adc_value = int(adc_text)
-                except ValueError:
-                    continue
-
-                writer.writerow([timestamp_us, adc_value])
-                rows_written += 1
-
-    finally:
-        connection.close()
-
-    print(f"Saved {rows_written} samples to {OUTPUT_PATH}")
-
-
-if __name__ == "__main__":
-    main()
+print(f"Finished. Recorded {sample_count} samples.")
+print(f"Saved to: {output_file}")
