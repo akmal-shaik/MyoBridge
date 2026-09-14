@@ -1,45 +1,102 @@
 import serial
 import csv
 import time
+import random
 from pathlib import Path
+from datetime import datetime
 
 PORT = "COM6"
 BAUD = 115200
 SAMPLE_RATE = 1000
-DURATION = 20
+DURATION = 3
+REPETITIONS = 5
 
-output_file = Path(__file__).resolve().parents[1] / "data" / "emg_validation.csv"
+ACTIONS = {
+	"OPEN_HAND": "Open your hand comfortably, without pressing against anything.",
+	"FIST": "Make a comfortable fist with your wrist straight. Do not press against the desk.",
+	"COMBINED_FLEX": "Make a fist and bend your wrist towards your palm comfortably."
+}
+session_id = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+output_file = (
+	Path(__file__).resolve().parents[1]
+	/ "data"
+	/ f"emg_labelled_{session_id}.csv"
+)
 
-ser = serial.Serial(PORT, BAUD, timeout=1)
-time.sleep(2)
-ser.reset_input_buffer()
 
-print(f"Recording EMG for {DURATION} seconds...")
+def read_adc(ser):
+	line = ser.readline().decode("utf-8", errors="ignore").strip()
 
-start_time = time.time()
-sample_count = 0
+	try:
+		adc = int(line)
+	except ValueError:
+		return None
 
-with open(output_file, "w", newline="") as file:
-	writer = csv.writer(file)
-	writer.writerow(["sample", "time_s", "adc"])
+	return adc if 0 <= adc <= 4095 else None
 
-	while time.time() - start_time < DURATION:
-		line = ser.readline().decode("utf-8", errors="ignore").strip()
 
-		if not line:
-			continue
+def drain_for(ser, seconds):
+	end_time = time.perf_counter() + seconds
+
+	while time.perf_counter() < end_time:
+		ser.readline()
+
+
+trial_id = 0
+total_samples = 0
+
+with serial.Serial(PORT, BAUD, timeout=1) as ser:
+	time.sleep(2)
+	ser.reset_input_buffer()
+
+	with open(output_file, "x", newline="") as file:
+		writer = csv.writer(file)
+		writer.writerow([
+			"session_id", "trial_id", "repetition",
+			"label", "sample", "time_s", "adc"
+		])
 
 		try:
-			adc = int(line)
-		except ValueError:
-			continue
+			for repetition in range(1, REPETITIONS + 1):
+				for label, instruction in random.sample(list(ACTIONS.items()), k=len(ACTIONS)):
+					trial_id += 1
 
-		time_s = sample_count / SAMPLE_RATE
+					print(f"\nTrial {trial_id}/{REPETITIONS * len(ACTIONS)} — {label}")
+					print(instruction)
+					input("Press Enter when ready, then begin the action.")
 
-		writer.writerow([sample_count, time_s, adc])
-		sample_count += 1
+					print("Begin now — settling for 2 seconds...")
+					drain_for(ser, 2)
+					ser.reset_input_buffer()
+					ser.readline()
 
-ser.close()
+					print("RECORDING — keep holding the same position.")
 
-print(f"Finished. Recorded {sample_count} samples.")
+					rows = []
+					start_time = time.perf_counter()
+
+					while time.perf_counter() - start_time < DURATION:
+						adc = read_adc(ser)
+
+						if adc is None:
+							continue
+
+						sample = len(rows)
+						rows.append([
+							session_id, trial_id, repetition,
+							label, sample, sample / SAMPLE_RATE, adc
+						])
+
+					writer.writerows(rows)
+					file.flush()
+					total_samples += len(rows)
+
+					print(f"Recorded {len(rows)} samples. RELAX.")
+					drain_for(ser, 5)
+
+		except KeyboardInterrupt:
+			print("\nStopped early. Completed trials have been saved.")
+			raise SystemExit
+
+print(f"\nFinished: {trial_id} trials, {total_samples} samples.")
 print(f"Saved to: {output_file}")
