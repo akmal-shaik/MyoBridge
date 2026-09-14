@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 
 ROOT = Path(__file__).resolve().parents[1]
 
-INPUT_FILE = ROOT / "data" / "emg_labelled_20260914_202149_952097.csv"
+INPUT_FILE = ROOT / "data" / "gestures_validation_03.csv"
 MODEL_FILE = ROOT / "models" / "emg_random_forest_fist.joblib"
 
 bundle = joblib.load(MODEL_FILE)
@@ -35,7 +35,12 @@ with INPUT_FILE.open(newline="") as file:
 if not trials:
 	raise SystemExit("The recording is empty.")
 
-if any(key[0] in bundle["training_file"] for key in trials):
+training_sessions = bundle.get("training_session_ids")
+
+if not training_sessions:
+	raise SystemExit("Model needs training-session metadata before validation.")
+
+if any(key[0] in training_sessions for key in trials):
 	raise SystemExit("This is the training recording. Use a fresh recording.")
 
 labels = list(model.classes_)

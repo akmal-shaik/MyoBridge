@@ -3,7 +3,7 @@ import statistics
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-data_file = Path(__file__).resolve().parents[1] / "data" / "emg_validation.csv"
+data_file = Path(__file__).resolve().parents[1] / "data" / "envelope_demo.csv"
 
 time_s = []
 adc = []

@@ -99,7 +99,6 @@ try:
 			)
 
 			window.clear()
-			prediction_history.clear()
 
 except KeyboardInterrupt:
 	print("\nClassifier stopped.")

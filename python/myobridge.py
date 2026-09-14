@@ -17,11 +17,16 @@ ACTIONS = {
 	"COMBINED_FLEX": "Make a fist and bend your wrist towards your palm comfortably."
 }
 session_id = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-output_file = (
-	Path(__file__).resolve().parents[1]
-	/ "data"
-	/ f"emg_labelled_{session_id}.csv"
-)
+
+data_dir = Path(__file__).resolve().parents[1] / "data"
+data_dir.mkdir(parents=True, exist_ok=True)
+
+recording_number = 1
+output_file = data_dir / f"gestures_recording_{recording_number:02d}.csv"
+
+while output_file.exists():
+	recording_number += 1
+	output_file = data_dir / f"gestures_recording_{recording_number:02d}.csv"
 
 
 def read_adc(ser):

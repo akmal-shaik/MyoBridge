@@ -13,17 +13,12 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 import joblib
 from sklearn.base import clone
 
-
-# -------------------------
 # SETTINGS
-# -------------------------
 
 ROOT = Path(__file__).resolve().parents[1]
 
-INPUT_FILE = ROOT / "data" / "emg_labelled_20260914_194646_314550.csv"
-OUTPUT_FILE = INPUT_FILE.with_name(
-	INPUT_FILE.name.replace("emg_labelled_", "emg_features_")
-)
+INPUT_FILE = ROOT / "data" / "gestures_train.csv"
+OUTPUT_FILE = ROOT / "data" / "gestures_train_features.csv"
 
 WINDOW_SIZE = 200
 ZC_THRESHOLD = 5
@@ -37,10 +32,7 @@ FEATURE_NAMES = [
 
 EXPECTED_LABELS = {"OPEN_HAND", "FIST", "COMBINED_FLEX"}
 
-
-# -------------------------
 # LOAD RECORDING
-# -------------------------
 
 trials = defaultdict(list)
 
@@ -80,10 +72,7 @@ for group, labels in repetition_labels.items():
 if len(repetition_labels) < 2:
 	raise SystemExit("At least two repetitions are needed for evaluation.")
 
-
-# -------------------------
 # EXTRACT WINDOW FEATURES
-# -------------------------
 
 features = []
 
@@ -143,10 +132,7 @@ for label in sorted(EXPECTED_LABELS):
 
 	print(f"{label}: {summary}")
 
-
-# -------------------------
 # PREPARE MODEL INPUTS
-# -------------------------
 
 X = np.array([
 	[row[name] for name in FEATURE_NAMES]
@@ -160,10 +146,7 @@ groups = np.array([
 	for row in features
 ])
 
-
-# -------------------------
 # EVALUATE HELD-OUT REPETITIONS
-# -------------------------
 
 rf_predictions = np.empty(len(y), dtype=object)
 baseline_predictions = np.empty(len(y), dtype=object)
@@ -191,7 +174,7 @@ for train_idx, test_idx in LeaveOneGroupOut().split(X, y, groups):
 	model.fit(X[train_idx], y[train_idx])
 	baseline.fit(X[train_idx, :1], y[train_idx])
 
-	# Predict the held-out repetition
+	# Predict the held out repetition
 	predicted = model.predict(X[test_idx])
 	simple = baseline.predict(X[test_idx, :1])
 
@@ -211,10 +194,7 @@ for train_idx, test_idx in LeaveOneGroupOut().split(X, y, groups):
 		flush=True
 	)
 
-
-# -------------------------
 # RESULTS
-# -------------------------
 
 print("\n--- OVERALL HELD-OUT RESULTS ---")
 print(f"RF accuracy: {accuracy_score(y, rf_predictions):.1%}")
@@ -255,7 +235,8 @@ joblib.dump({
 	"window_size": WINDOW_SIZE,
 	"zc_threshold": ZC_THRESHOLD,
 	"sample_rate": 1000,
-	"training_file": INPUT_FILE.name
+	"training_file": INPUT_FILE.name,
+	"training_session_ids": sorted({row["session_id"] for row in features}),
 }, MODEL_FILE)
 
 print(f"\nSaved FIST model: {MODEL_FILE}")
