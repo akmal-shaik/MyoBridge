@@ -187,6 +187,10 @@ Session IDs remain inside the CSVs even though filenames are descriptive.
 - Live processing latency has not been formally benchmarked.
 - Calibration percentages describe the session's signal range, not measured muscle force.
 
-## License
+## Animated walkthrough
 
-MIT — see `LICENSE`.
+[Watch the MyoBridge walkthrough](docs/myobridge_walkthrough.mp4)
+
+A 20-second illustrative animation showing the MyoWare sensor, ESP32, USB isolator and laptop interface through three gestures.
+
+The animation uses simulated signals, MAV values and model scores. It explains the system architecture; measured results from real recordings are reported below.
